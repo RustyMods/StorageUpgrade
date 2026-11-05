@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Configuration;
@@ -134,7 +133,10 @@ public class UpgradeMap
         {
             var parts = str.Split('*');
             itemId = parts[0];
-            amount = int.Parse(parts[1]);
+            if (!int.TryParse(parts[1], out amount))
+            {
+                amount = 1;
+            }
         }
     }
 }

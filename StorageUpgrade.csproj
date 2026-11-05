@@ -123,19 +123,19 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Enums\CostType.cs" />
+        <Compile Include="Enums\JoyButtons.cs" />
+        <Compile Include="Enums\UpgradeType.cs" />
         <Compile Include="Managers\ConfigManager.cs"/>
         <Compile Include="Managers\LocalizationManager.cs"/>
         <Compile Include="Managers\PrefabManager.cs"/>
         <Compile Include="Plugin.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
         <Compile Include="src\Configs.cs" />
-        <Compile Include="src\CostType.cs" />
-        <Compile Include="src\JoyButtons.cs" />
         <Compile Include="src\RefundUpgrade.cs" />
         <Compile Include="src\InvButton.cs" />
         <Compile Include="src\UI.cs" />
         <Compile Include="src\Upgrade.cs" />
-        <Compile Include="src\UpgradeType.cs" />
         <Compile Include="src\Vars.cs" />
         <Compile Include="VersionHandshake.cs"/>
     </ItemGroup>
@@ -151,8 +151,10 @@
         </Content>
         <Content Include="README.md"/>
         <Content Include="Thunderstore\CHANGELOG.md"/>
+        <Content Include="Thunderstore\icon.png" />
         <Content Include="Thunderstore\manifest.json"/>
         <EmbeddedResource Include="translations\English.yml"/>
+        <Content Include="Thunderstore\StorageUpgrade.dll" />
         <Content Include="UpdateManifest.ps1"/>
     </ItemGroup>
     <ItemGroup>

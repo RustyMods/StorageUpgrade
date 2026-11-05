@@ -11,7 +11,7 @@ Allows to upgrade size of containers
 ## Notes
 
 Base game handles items within container outside of inventory size rows, but not column ( which is why upgrade container column is off by default ); 
-Thus, if you allow to upgrade container columns, do not remove plugin or else the UI for that container will break.
+Thus, if you allow to upgrade container columns and upgrade column, do not remove plugin or else the UI for that specific container will break.
 
 ## Cost Calculation
 

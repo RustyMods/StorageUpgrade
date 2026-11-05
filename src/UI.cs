@@ -39,14 +39,34 @@ public static class UI
         if (InventoryGui.instance == null) return;
         if (InventoryGui.instance.m_currentContainer == null) return;
         if (InventoryGui.instance.m_currentContainer.m_nview == null) return;
+        
+        UnifiedPopup.Push(new YesNoPopup(AddRowButton.tmp.text, InventoryGui.instance.m_currentContainer.GetHeightCostTooltip(1),
+            () =>
+            {
+                if (!InventoryGui.instance.m_currentContainer.AddHeight(1))
+                {
+                    UnifiedPopup.instance.Hide();
+                    return;
+                }
+                
+                AddColumnButton.instance.SetActive(InventoryGui.instance.m_currentContainer.CanAddWidth());
+                AddRowButton.instance.SetActive(InventoryGui.instance.m_currentContainer.CanAddHeight());
+        
+                AddRowButton.tooltip.Set(AddRowButton.tmp.text, InventoryGui.instance.m_currentContainer.GetHeightCostTooltip(1));
+                AddColumnButton.tooltip.Set(AddColumnButton.tmp.text, InventoryGui.instance.m_currentContainer.GetWidthCostTooltip(1));
+        
+                AddRowButton.button.interactable = InventoryGui.instance.m_currentContainer.CanPurchaseHeight(Player.m_localPlayer, 1, out _);
+                AddColumnButton.button.interactable = InventoryGui.instance.m_currentContainer.CanPurchaseWidth(Player.m_localPlayer, 1, out _);
 
-        InventoryGui.instance.m_currentContainer.AddHeight(1);
-        
-        AddRowButton.tooltip.Set(AddRowButton.tmp.text, InventoryGui.instance.m_currentContainer.GetHeightCostTooltip(1));
-        AddColumnButton.tooltip.Set(AddColumnButton.tmp.text, InventoryGui.instance.m_currentContainer.GetWidthCostTooltip(1));
-        
-        AddRowButton.button.interactable = InventoryGui.instance.m_currentContainer.CanPurchaseHeight(Player.m_localPlayer, 1, out _);
-        AddColumnButton.button.interactable = InventoryGui.instance.m_currentContainer.CanPurchaseWidth(Player.m_localPlayer, 1, out _);
+                if (!AddRowButton.button.interactable)
+                {
+                    UnifiedPopup.instance.Hide();
+                }
+                
+            }, () =>
+            {
+                UnifiedPopup.instance.Hide();
+            }));
     }
 
     private static void AddWidth()
@@ -54,27 +74,44 @@ public static class UI
         if (InventoryGui.instance == null) return;
         if (InventoryGui.instance.m_currentContainer == null) return;
         if (InventoryGui.instance.m_currentContainer.m_nview == null) return;
-    
-        InventoryGui.instance.m_currentContainer.AddWidth(1);
         
-        AddColumnButton.instance.SetActive(InventoryGui.instance.m_currentContainer.CanAddWidth());
+        UnifiedPopup.Push(new YesNoPopup(AddColumnButton.tmp.text, InventoryGui.instance.m_currentContainer.GetWidthCostTooltip(1),
+            () =>
+            {
+                if (!InventoryGui.instance.m_currentContainer.AddWidth(1))
+                {
+                    UnifiedPopup.instance.Hide();
+                    return;
+                }
         
-        AddRowButton.tooltip.Set(AddRowButton.tmp.text, InventoryGui.instance.m_currentContainer.GetHeightCostTooltip(1));
-        AddColumnButton.tooltip.Set(AddColumnButton.tmp.text, InventoryGui.instance.m_currentContainer.GetWidthCostTooltip(1));
+                AddColumnButton.instance.SetActive(InventoryGui.instance.m_currentContainer.CanAddWidth());
+                AddRowButton.instance.SetActive(InventoryGui.instance.m_currentContainer.CanAddHeight());
         
-        AddRowButton.button.interactable = InventoryGui.instance.m_currentContainer.CanPurchaseHeight(Player.m_localPlayer, 1, out _);
-        AddColumnButton.button.interactable = InventoryGui.instance.m_currentContainer.CanPurchaseWidth(Player.m_localPlayer, 1, out _);
+                AddRowButton.tooltip.Set(AddRowButton.tmp.text, InventoryGui.instance.m_currentContainer.GetHeightCostTooltip(1));
+                AddColumnButton.tooltip.Set(AddColumnButton.tmp.text, InventoryGui.instance.m_currentContainer.GetWidthCostTooltip(1));
+        
+                AddRowButton.button.interactable = InventoryGui.instance.m_currentContainer.CanPurchaseHeight(Player.m_localPlayer, 1, out _);
+                AddColumnButton.button.interactable = InventoryGui.instance.m_currentContainer.CanPurchaseWidth(Player.m_localPlayer, 1, out _);
+
+                if (!AddColumnButton.button.interactable)
+                {
+                    UnifiedPopup.instance.Hide();
+                }
+            }, () =>
+            {
+                UnifiedPopup.instance.Hide();
+
+            }));
     }
-
-
+    
     [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Show))]
     private static class InventoryGUI_Show_Postfix
     {
         private static void Postfix(Container container)
         {
             bool show = container != null && container.m_nview != null;
-            AddRowButton.instance.SetActive(show);
-            AddColumnButton.instance.SetActive(Configs.AddColumns && show && container != null && container.CanAddWidth());
+            AddRowButton.instance.SetActive(show && container.CanAddHeight());
+            AddColumnButton.instance.SetActive(Configs.AddColumns && show && container.CanAddWidth());
 
             if (container == null) return;
             AddRowButton.button.interactable = container.CanPurchaseHeight(Player.m_localPlayer, 1, out _);
@@ -82,7 +119,6 @@ public static class UI
             
             AddRowButton.tooltip.Set(AddRowButton.tmp.text, container.GetHeightCostTooltip(1));
             AddColumnButton.tooltip.Set(AddColumnButton.tmp.text, container.GetWidthCostTooltip(1));
-            
         }
     }
 }

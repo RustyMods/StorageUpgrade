@@ -26,13 +26,6 @@ public static class Upgrade
     {
         public bool CanAddWidth()
         {
-            return container.m_inventory.m_width < 7;
-        }
-
-        public bool CanPurchaseWidth(Player player, int amount, out Piece.Requirement[] cost)
-        {
-            cost = container.GetColumnCost(amount);
-
             if (Configs.UpgradeType != UpgradeType.Infinite)
             {
                 var baseTotal = container.m_height * container.m_width;
@@ -47,6 +40,15 @@ public static class Upgrade
                         break;
                 }
             }
+            
+            return container.m_inventory.m_width < 7;
+        }
+
+        public bool CanPurchaseWidth(Player player, int amount, out Piece.Requirement[] cost)
+        {
+            cost = container.GetColumnCost(amount);
+
+            if (!container.CanAddWidth()) return false;
 
             if (player.NoCostCheat()) return true;
             
@@ -60,10 +62,8 @@ public static class Upgrade
             return true;
         }
 
-        public bool CanPurchaseHeight(Player player, int amount, out Piece.Requirement[] cost)
+        public bool CanAddHeight()
         {
-            cost = container.GetRowCost(amount);
-            
             if (Configs.UpgradeType != UpgradeType.Infinite)
             {
                 var baseTotal = container.m_height * container.m_width;
@@ -78,6 +78,15 @@ public static class Upgrade
                         break;
                 }
             }
+
+            return true;
+        }
+
+        public bool CanPurchaseHeight(Player player, int amount, out Piece.Requirement[] cost)
+        {
+            cost = container.GetRowCost(amount);
+
+            if (!container.CanAddHeight()) return false;
 
             if (player.NoCostCheat()) return true;
             
