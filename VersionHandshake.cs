@@ -6,14 +6,16 @@ namespace StorageUpgrade;
 
 public static class VersionHandshake
 {
+#pragma warning disable CS0414 // Field is assigned but its value is never used
     private static bool load;
+#pragma warning restore CS0414 // Field is assigned but its value is never used
     public static readonly List<ZRpc> ValidatedPeers;
     internal static string ConnectionError = "";
-    
+
     static VersionHandshake()
     {
         ValidatedPeers = [];
-        
+
         StorageUpgradePlugin.harmony.Patch(
             AccessTools.DeclaredMethod(typeof(ZNet), nameof(ZNet.OnNewConnection)),
             new HarmonyMethod(AccessTools.DeclaredMethod(typeof(VersionHandshake),
@@ -30,7 +32,7 @@ public static class VersionHandshake
     }
 
     public static void Init() => load = true;
-    
+
     private static void ZNet_OnNewConnection_Prefix(ZNetPeer peer, ref ZNet __instance)
     {
         // Register version check call
@@ -80,8 +82,8 @@ public static class VersionHandshake
             $"Peer ({peer.m_rpc.m_socket.GetHostName()}) disconnected, removing from validated list");
         _ = ValidatedPeers.Remove(peer.m_rpc);
     }
-    
-    
+
+
     public static void RPC_StorageUpgrade_Version(ZRpc rpc, ZPackage pkg)
     {
         var version = pkg.ReadString();

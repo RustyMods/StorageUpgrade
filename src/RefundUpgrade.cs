@@ -1,10 +1,9 @@
-using System.Text;
 using HarmonyLib;
 using UnityEngine;
 
 namespace StorageUpgrade;
 
-public static class OnDestroy
+public static class RefundUpgrade
 {
     [HarmonyPatch(typeof(Piece), nameof(Piece.DropResources))]
     private static class Piece_DropResources_Postfix
@@ -14,7 +13,7 @@ public static class OnDestroy
             if (!__instance.TryGetComponent(out Container container)) return;
             if (!Configs.Refund) return;
 
-            var cost = container.GetResources();
+            var cost = container.GetUsedUpgradeResources();
 
             for (int i = 0; i < cost.Length; ++i)
             {

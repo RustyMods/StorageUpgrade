@@ -1,6 +1,8 @@
 namespace StorageUpgrade;
 
-public class UpgradeType
+public enum UpgradeType
 {
-    
+    Infinite,
+    Double,
+    Triple
 }

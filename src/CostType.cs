@@ -1,6 +1,8 @@
 namespace StorageUpgrade;
 
-public class CostType
+public enum CostType
 {
-    
+    Percentage,
+    Half,
+    Full
 }

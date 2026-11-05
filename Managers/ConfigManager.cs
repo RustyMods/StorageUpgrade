@@ -6,25 +6,27 @@ using BepInEx.Configuration;
 using JetBrains.Annotations;
 using ServerSync;
 using UnityEngine;
-
+#nullable enable
 namespace StorageUpgrade;
 
 public enum Toggle
 {
     On = 1,
-    Off = 0 
+    Off = 0
 }
 
 public static class KeyboardExtensions
 {
     public static bool IsKeyDown(this KeyboardShortcut shortcut)
     {
-        return shortcut.MainKey != KeyCode.None && Input.GetKeyDown(shortcut.MainKey) && shortcut.Modifiers.All(Input.GetKey);
+        return shortcut.MainKey != KeyCode.None && Input.GetKeyDown(shortcut.MainKey) &&
+               shortcut.Modifiers.All(Input.GetKey);
     }
 
     public static bool IsKeyHeld(this KeyboardShortcut shortcut)
     {
-        return shortcut.MainKey != KeyCode.None && Input.GetKey(shortcut.MainKey) && shortcut.Modifiers.All(Input.GetKey);
+        return shortcut.MainKey != KeyCode.None && Input.GetKey(shortcut.MainKey) &&
+               shortcut.Modifiers.All(Input.GetKey);
     }
 }
 
@@ -37,7 +39,8 @@ public class AcceptableShortcuts : AcceptableValueBase
     public override object Clamp(object value) => value;
     public override bool IsValid(object value) => true;
 
-    public override string ToDescriptionString() => "# Acceptable values: " + string.Join(", ", UnityInput.Current.SupportedKeyCodes);
+    public override string ToDescriptionString() =>
+        "# Acceptable values: " + string.Join(", ", UnityInput.Current.SupportedKeyCodes);
 }
 
 public class ConfigurationManagerAttributes
@@ -60,23 +63,22 @@ public static class ConfigManager
     static ConfigManager()
     {
         ConfigFileName = StorageUpgradePlugin.ModGUID + ".cfg";
-        ConfigFileFullPath =  Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
-        ConfigSync = new ConfigSync(StorageUpgradePlugin.ModGUID) 
-            { 
-                DisplayName = StorageUpgradePlugin.ModName, 
-                CurrentVersion = StorageUpgradePlugin.ModVersion,
-                MinimumRequiredVersion = StorageUpgradePlugin.ModVersion 
-            };
-        
-        _serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On, "If on, the configuration is locked and can be changed by server admins only.");
+        ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
+        ConfigSync = new ConfigSync(StorageUpgradePlugin.ModGUID)
+        {
+            DisplayName = StorageUpgradePlugin.ModName,
+            CurrentVersion = StorageUpgradePlugin.ModVersion,
+            MinimumRequiredVersion = StorageUpgradePlugin.ModVersion
+        };
+
+        _serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On,
+            "If on, the configuration is locked and can be changed by server admins only.");
         _ = ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
-        
+
         SetupWatcher();
-
     }
-    
 
-    
+
     private static void SetupWatcher()
     {
         FileSystemWatcher watcher = new(Paths.ConfigPath, ConfigFileName);
@@ -87,10 +89,13 @@ public static class ConfigManager
         watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
         watcher.EnableRaisingEvents = true;
     }
-    
-    private static ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description, bool synchronizedSetting = true)
+
+    public static ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
+        bool synchronizedSetting = true)
     {
-        ConfigDescription extendedDescription = new(description.Description + (synchronizedSetting ? " [Synced with Server]" : " [Not Synced with Server]"), description.AcceptableValues, description.Tags);
+        ConfigDescription extendedDescription =
+            new(description.Description + (synchronizedSetting ? " [Synced with Server]" : " [Not Synced with Server]"),
+                description.AcceptableValues, description.Tags);
         ConfigEntry<T> configEntry = StorageUpgradePlugin.instance.Config.Bind(group, name, value, extendedDescription);
         //var configEntry = Config.Bind(group, name, value, description);
 
@@ -100,11 +105,12 @@ public static class ConfigManager
         return configEntry;
     }
 
-    private static ConfigEntry<T> config<T>(string group, string name, T value, string description, bool synchronizedSetting = true)
+    public static ConfigEntry<T> config<T>(string group, string name, T value, string description,
+        bool synchronizedSetting = true)
     {
         return config(group, name, value, new ConfigDescription(description), synchronizedSetting);
     }
-    
+
     private static void ReadConfigValues(object sender, FileSystemEventArgs e)
     {
         if (!File.Exists(ConfigFileFullPath)) return;
